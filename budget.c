@@ -175,7 +175,6 @@ void budgetPrintRow(int index)
 }
 
 
-/* ---------- Calculations ---------- */
 
 double calculateRemainingBudget(double allocated, double spent)
 {
@@ -192,7 +191,6 @@ int isWithinBudget(double allocated, double spent)
 }
 
 
-/* ---------- Budget operations ---------- */
 
 void enterDepartmentBudget(void)
 {
@@ -457,10 +455,6 @@ void displayBudgetReport(void)
     {
         printf("  None\n");
     }
-}
-
-
-/* ---------- Budget menu ---------- */
 
 void budgetMenu(void)
 {
