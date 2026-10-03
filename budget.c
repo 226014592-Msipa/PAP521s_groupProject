@@ -455,7 +455,7 @@ void displayBudgetReport(void)
     {
         printf("  None\n");
     }
-
+}
 void budgetMenu(void)
 {
     int choice;
