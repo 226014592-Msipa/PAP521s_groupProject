@@ -2,9 +2,9 @@
 #include <string.h>
 #include "budget.h"
 
-char   budgetNames[MAX_DEPARTMENTS][MAX_DEPT_NAME];
-double budgetAllocated[MAX_DEPARTMENTS];
-double budgetSpent[MAX_DEPARTMENTS];
+char   budgetNames[20][20];
+double budgetAllocated[20];
+double budgetSpent[20];
 int    budgetCount = 0;
 
 void   budgetFlushLine(void);
@@ -175,7 +175,6 @@ void budgetPrintRow(int index)
 }
 
 
-/* ---------- Calculations ---------- */
 
 double calculateRemainingBudget(double allocated, double spent)
 {
@@ -192,7 +191,6 @@ int isWithinBudget(double allocated, double spent)
 }
 
 
-/* ---------- Budget operations ---------- */
 
 void enterDepartmentBudget(void)
 {
@@ -457,10 +455,6 @@ void displayBudgetReport(void)
     {
         printf("  None\n");
     }
-}
-
-
-/* ---------- Budget menu ---------- */
 
 void budgetMenu(void)
 {
