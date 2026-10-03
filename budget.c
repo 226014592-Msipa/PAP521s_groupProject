@@ -1,31 +1,31 @@
+
 #include <stdio.h>
 #include <string.h>
 #include "budget.h"
 
-char   budgetNames[20][20];
-double budgetAllocated[20];
-double budgetSpent[20];
-int    budgetCount = 0;
 
-void   budgetFlushLine(void);
-int    budgetReadName(char name[], int size);
-double budgetReadAmount(char prompt[], int allowZero);
-int    budgetReadChoice(void);
-int    budgetFindDepartment(char name[]);
-void   budgetPrintHeader(void);
-void   budgetPrintRow(int index);
+char budgetNames[MAX_DEPARTMENTS][MAX_DEPT_NAME];
+double budgetAllocated[MAX_DEPARTMENTS];
+double budgetSpent[MAX_DEPARTMENTS];
+int budgetCount = 0;
+
+
+void budgetFlushLine(void);
+int budgetReadName(char name[], int size);
+double budgetReadAmount(const char prompt[], int allowZero);
+int budgetReadChoice(void);
+int budgetFindDepartment(const char name[]);
+void budgetPrintHeader(void);
+void budgetPrintRow(int index);
 
 
 void budgetFlushLine(void)
 {
-    char junk[100];
+    int ch;
 
-    while (fgets(junk, sizeof(junk), stdin) != NULL)
+    while ((ch = getchar()) != '\n' && ch != EOF)
     {
-        if (strcspn(junk, "\n") < strlen(junk))
-        {
-            break;  
-        }
+        /* Clear remaining input */
     }
 }
 
@@ -37,32 +37,41 @@ int budgetReadName(char name[], int size)
     int hasText = 0;
 
     printf("Department name: ");
+
     if (fgets(line, sizeof(line), stdin) == NULL)
     {
         return -1;
     }
 
-    length = strcspn(line, "\n");
-    if (line[length] == '\0')
+    length = (int)strcspn(line, "\n");
+
+    /* If the input is longer than the buffer,
+       clear the remaining characters. */
+    if (line[length] == '\n')
     {
-        budgetFlushLine();        
+        line[length] = '\0';
     }
-    line[length] = '\0';           
+    else
+    {
+        budgetFlushLine();
+    }
 
     for (i = 0; i < length; i++)
     {
         if (line[i] != ' ' && line[i] != '\t')
         {
             hasText = 1;
+            break;
         }
     }
 
-    if (hasText == 0)
+    if (!hasText)
     {
         printf("Error: department name cannot be empty.\n");
         return 0;
     }
-    if (strlen(line) >= (size_t)size)
+
+    if (length >= size)
     {
         printf("Error: department name must be shorter than %d characters.\n",
                size);
@@ -70,10 +79,12 @@ int budgetReadName(char name[], int size)
     }
 
     strcpy(name, line);
+
     return 1;
 }
 
-double budgetReadAmount(char prompt[], int allowZero)
+
+double budgetReadAmount(const char prompt[], int allowZero)
 {
     double amount;
     int result;
@@ -81,6 +92,7 @@ double budgetReadAmount(char prompt[], int allowZero)
     while (1)
     {
         printf("%s", prompt);
+
         result = scanf("%lf", &amount);
 
         if (result == EOF)
@@ -88,19 +100,20 @@ double budgetReadAmount(char prompt[], int allowZero)
             printf("\nInput closed.\n");
             return -1.0;
         }
+
         budgetFlushLine();
 
         if (result != 1)
         {
-            printf("  Error: please enter a valid number.\n");
+            printf("Error: please enter a valid number.\n");
         }
         else if (amount < 0)
         {
-            printf("  Error: amount cannot be negative.\n");
+            printf("Error: amount cannot be negative.\n");
         }
         else if (amount == 0 && allowZero == 0)
         {
-            printf("  Error: amount must be greater than zero.\n");
+            printf("Error: amount must be greater than zero.\n");
         }
         else
         {
@@ -109,12 +122,14 @@ double budgetReadAmount(char prompt[], int allowZero)
     }
 }
 
+
 int budgetReadChoice(void)
 {
     int choice;
     int result;
 
     printf("Enter your choice: ");
+
     result = scanf("%d", &choice);
 
     if (result == EOF)
@@ -122,16 +137,19 @@ int budgetReadChoice(void)
         printf("\nInput closed. Returning to main menu...\n");
         return 6;
     }
+
     budgetFlushLine();
 
     if (result != 1)
     {
         return -1;
     }
+
     return choice;
 }
 
-int budgetFindDepartment(char name[])
+
+int budgetFindDepartment(const char name[])
 {
     int i;
 
@@ -142,29 +160,42 @@ int budgetFindDepartment(char name[])
             return i;
         }
     }
+
     return -1;
 }
+
 
 void budgetPrintHeader(void)
 {
     printf("\n%-20s %15s %15s %15s  %s\n",
-           "Department", "Allocated (N$)", "Spent (N$)",
-           "Remaining (N$)", "Status");
-    printf("-----------------------------------------------------------"
-           "------------------\n");
+           "Department",
+           "Allocated (N$)",
+           "Spent (N$)",
+           "Remaining (N$)",
+           "Status");
+
+    printf("-------------------------------------------------------------------------------\n");
 }
+
 
 void budgetPrintRow(int index)
 {
     double remaining;
 
-    remaining = calculateRemainingBudget(budgetAllocated[index],
-                                         budgetSpent[index]);
-    printf("%-20s %15.2f %15.2f %15.2f  ",
-           budgetNames[index], budgetAllocated[index],
-           budgetSpent[index], remaining);
+    remaining = calculateRemainingBudget(
+        budgetAllocated[index],
+        budgetSpent[index]
+    );
 
-    if (isWithinBudget(budgetAllocated[index], budgetSpent[index]))
+    printf("%-20s %15.2f %15.2f %15.2f  ",
+           budgetNames[index],
+           budgetAllocated[index],
+           budgetSpent[index],
+           remaining);
+
+    if (isWithinBudget(
+            budgetAllocated[index],
+            budgetSpent[index]))
     {
         printf("WITHIN BUDGET\n");
     }
@@ -175,18 +206,19 @@ void budgetPrintRow(int index)
 }
 
 
-
-double calculateRemainingBudget(double allocated, double spent)
+double calculateRemainingBudget(double allocated, double expenditure)
 {
-    return allocated - spent;
+    return allocated - expenditure;
 }
 
-int isWithinBudget(double allocated, double spent)
+
+int isWithinBudget(double allocated, double expenditure)
 {
-    if (spent <= allocated)
+    if (expenditure <= allocated)
     {
         return 1;
     }
+
     return 0;
 }
 
@@ -202,11 +234,13 @@ void enterDepartmentBudget(void)
 
     if (budgetCount >= MAX_DEPARTMENTS)
     {
-        printf("Error: maximum of %d departments reached.\n", MAX_DEPARTMENTS);
+        printf("Error: maximum of %d departments reached.\n",
+               MAX_DEPARTMENTS);
         return;
     }
 
     result = budgetReadName(name, MAX_DEPT_NAME);
+
     if (result != 1)
     {
         return;
@@ -218,19 +252,29 @@ void enterDepartmentBudget(void)
         return;
     }
 
-    amount = budgetReadAmount("Allocated budget (N$): ", 0);
+    amount = budgetReadAmount(
+        "Allocated budget (N$): ",
+        0
+    );
+
     if (amount < 0)
     {
         return;
     }
 
     strcpy(budgetNames[budgetCount], name);
+
     budgetAllocated[budgetCount] = amount;
     budgetSpent[budgetCount] = 0.0;
+
     budgetCount++;
 
-    printf("Budget of N$%.2f saved for %s.\n", amount, name);
+    printf("Budget of N$%.2f saved for %s.\n",
+           amount,
+           name);
 }
+
+
 
 void enterExpenditure(void)
 {
@@ -249,37 +293,54 @@ void enterExpenditure(void)
     }
 
     result = budgetReadName(name, MAX_DEPT_NAME);
+
     if (result != 1)
     {
         return;
     }
 
     index = budgetFindDepartment(name);
+
     if (index == -1)
     {
         printf("Error: department '%s' not found.\n", name);
         return;
     }
 
-    amount = budgetReadAmount("Expenditure amount (N$): ", 1);
+    amount = budgetReadAmount(
+        "Expenditure amount (N$): ",
+        1
+    );
+
     if (amount < 0)
     {
         return;
     }
 
-    budgetSpent[index] = budgetSpent[index] + amount;
-    remaining = calculateRemainingBudget(budgetAllocated[index],
-                                         budgetSpent[index]);
+    budgetSpent[index] += amount;
 
-    printf("Total expenditure for %s: N$%.2f\n", name, budgetSpent[index]);
-    printf("Remaining budget: N$%.2f\n", remaining);
+    remaining = calculateRemainingBudget(
+        budgetAllocated[index],
+        budgetSpent[index]
+    );
 
-    if (isWithinBudget(budgetAllocated[index], budgetSpent[index]) == 0)
+    printf("Total expenditure for %s: N$%.2f\n",
+           name,
+           budgetSpent[index]);
+
+    printf("Remaining budget: N$%.2f\n",
+           remaining);
+
+    if (!isWithinBudget(
+            budgetAllocated[index],
+            budgetSpent[index]))
     {
         printf("WARNING: %s has exceeded its budget by N$%.2f!\n",
-               name, -remaining);
+               name,
+               -remaining);
     }
 }
+
 
 void displayBudgetInfo(void)
 {
@@ -294,11 +355,13 @@ void displayBudgetInfo(void)
     }
 
     budgetPrintHeader();
+
     for (i = 0; i < budgetCount; i++)
     {
         budgetPrintRow(i);
     }
 }
+
 
 void searchDepartmentBudget(void)
 {
@@ -316,26 +379,40 @@ void searchDepartmentBudget(void)
     }
 
     result = budgetReadName(name, MAX_DEPT_NAME);
+
     if (result != 1)
     {
         return;
     }
 
     index = budgetFindDepartment(name);
+
     if (index == -1)
     {
         printf("Department '%s' not found.\n", name);
         return;
     }
 
-    remaining = calculateRemainingBudget(budgetAllocated[index],
-                                         budgetSpent[index]);
-    printf("\nDepartment:       %s\n", budgetNames[index]);
-    printf("Allocated Budget: N$%.2f\n", budgetAllocated[index]);
-    printf("Expenditure:      N$%.2f\n", budgetSpent[index]);
-    printf("Remaining Budget: N$%.2f\n", remaining);
+    remaining = calculateRemainingBudget(
+        budgetAllocated[index],
+        budgetSpent[index]
+    );
 
-    if (isWithinBudget(budgetAllocated[index], budgetSpent[index]))
+    printf("\nDepartment:       %s\n",
+           budgetNames[index]);
+
+    printf("Allocated Budget: N$%.2f\n",
+           budgetAllocated[index]);
+
+    printf("Expenditure:      N$%.2f\n",
+           budgetSpent[index]);
+
+    printf("Remaining Budget: N$%.2f\n",
+           remaining);
+
+    if (isWithinBudget(
+            budgetAllocated[index],
+            budgetSpent[index]))
     {
         printf("Status:           WITHIN BUDGET\n");
     }
@@ -344,6 +421,7 @@ void searchDepartmentBudget(void)
         printf("Status:           OVER BUDGET\n");
     }
 }
+
 
 void displayExceededDepartments(void)
 {
@@ -354,18 +432,21 @@ void displayExceededDepartments(void)
 
     for (i = 0; i < budgetCount; i++)
     {
-        if (isWithinBudget(budgetAllocated[i], budgetSpent[i]) == 0)
+        if (!isWithinBudget(
+                budgetAllocated[i],
+                budgetSpent[i]))
         {
-            if (found == 0)
+            if (!found)
             {
                 budgetPrintHeader();
                 found = 1;
             }
+
             budgetPrintRow(i);
         }
     }
 
-    if (found == 0)
+    if (!found)
     {
         printf("No department has exceeded its budget.\n");
     }
@@ -377,6 +458,8 @@ int getDepartmentCount(void)
     return budgetCount;
 }
 
+
+
 double getTotalAllocated(void)
 {
     double total = 0.0;
@@ -384,8 +467,9 @@ double getTotalAllocated(void)
 
     for (i = 0; i < budgetCount; i++)
     {
-        total = total + budgetAllocated[i];
+        total += budgetAllocated[i];
     }
+
     return total;
 }
 
@@ -396,14 +480,19 @@ double getTotalExpenditure(void)
 
     for (i = 0; i < budgetCount; i++)
     {
-        total = total + budgetSpent[i];
+        total += budgetSpent[i];
     }
+
     return total;
 }
 
+
 double getTotalRemaining(void)
 {
-    return calculateRemainingBudget(getTotalAllocated(), getTotalExpenditure());
+    return calculateRemainingBudget(
+        getTotalAllocated(),
+        getTotalExpenditure()
+    );
 }
 
 int countExceededDepartments(void)
@@ -413,13 +502,17 @@ int countExceededDepartments(void)
 
     for (i = 0; i < budgetCount; i++)
     {
-        if (isWithinBudget(budgetAllocated[i], budgetSpent[i]) == 0)
+        if (!isWithinBudget(
+                budgetAllocated[i],
+                budgetSpent[i]))
         {
             count++;
         }
     }
+
     return count;
 }
+
 
 void displayBudgetReport(void)
 {
@@ -436,26 +529,42 @@ void displayBudgetReport(void)
         return;
     }
 
-    printf("Total Departments:        %d\n", budgetCount);
-    printf("Total Allocated Budget:   N$%.2f\n", getTotalAllocated());
-    printf("Total Expenditure:        N$%.2f\n", getTotalExpenditure());
-    printf("Total Remaining Budget:   N$%.2f\n", getTotalRemaining());
+    printf("Total Departments:        %d\n",
+           budgetCount);
 
-    printf("\nDepartments exceeding budget: %d\n", countExceededDepartments());
+    printf("Total Allocated Budget:   N$%.2f\n",
+           getTotalAllocated());
+
+    printf("Total Expenditure:        N$%.2f\n",
+           getTotalExpenditure());
+
+    printf("Total Remaining Budget:   N$%.2f\n",
+           getTotalRemaining());
+
+    printf("\nDepartments exceeding budget: %d\n",
+           countExceededDepartments());
+
     for (i = 0; i < budgetCount; i++)
     {
-        if (isWithinBudget(budgetAllocated[i], budgetSpent[i]) == 0)
+        if (!isWithinBudget(
+                budgetAllocated[i],
+                budgetSpent[i]))
         {
-            printf("  - %s (over by N$%.2f)\n", budgetNames[i],
+            printf("  - %s (over by N$%.2f)\n",
+                   budgetNames[i],
                    budgetSpent[i] - budgetAllocated[i]);
+
             found = 1;
         }
     }
-    if (found == 0)
+
+    if (!found)
     {
         printf("  None\n");
     }
 }
+
+
 void budgetMenu(void)
 {
     int choice;
@@ -479,23 +588,30 @@ void budgetMenu(void)
             case 1:
                 enterDepartmentBudget();
                 break;
+
             case 2:
                 enterExpenditure();
                 break;
+
             case 3:
                 displayBudgetInfo();
                 break;
+
             case 4:
                 searchDepartmentBudget();
                 break;
+
             case 5:
                 displayExceededDepartments();
                 break;
+
             case 6:
                 printf("Returning to main menu...\n");
                 break;
+
             default:
                 printf("Invalid choice. Please enter a number from 1 to 6.\n");
         }
-    } while (choice!= 6);
+
+    } while (choice != 6);
 }
