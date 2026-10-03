@@ -2,9 +2,9 @@
 #include <string.h>
 #include "budget.h"
 
-char   budgetNames[MAX_DEPARTMENTS][MAX_DEPT_NAME];
-double budgetAllocated[MAX_DEPARTMENTS];
-double budgetSpent[MAX_DEPARTMENTS];
+char   budgetNames[20][20];
+double budgetAllocated[20];
+double budgetSpent[20];
 int    budgetCount = 0;
 
 void   budgetFlushLine(void);
