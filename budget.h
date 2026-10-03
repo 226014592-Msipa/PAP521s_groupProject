@@ -2,11 +2,11 @@
 #define BUDGET_H
 
 #define MAX_DEPARTMENTS 20
-#define MAX_DEPT_NAME 50
+#define MAX_DEPT_NAME 20
 
-extern char budgetNames[MAX_DEPARTMENTS][MAX_DEPT_NAME];
-extern double budgetAllocated[MAX_DEPARTMENTS];
-extern double budgetSpent[MAX_DEPARTMENTS];
+extern char budgetNames[20][20];
+extern double budgetAllocated[20];
+extern double budgetSpent[20];
 extern int budgetCount;
 
 double calculateRemainingBudget(double allocated, double spent);
