@@ -74,7 +74,7 @@ void addDepartmentBudget(Department departments[], int *departmentCount)
     printf("Enter department budget: N$ ");
     scanf("%f", &departments[*departmentCount].budget);
 
-    // New department starts with zero expenditure
+    
     departments[*departmentCount].expenditure = 0;
 
     (*departmentCount)++;
@@ -227,7 +227,6 @@ void checkBudgetStatus(Department departments[], int departmentCount)
 
     printf("\n============================================\n");
 
-    // Identify departments that exceeded their budget
     if (exceeded == 1)
     {
         printf("\nDepartments that exceeded their budget:\n");
