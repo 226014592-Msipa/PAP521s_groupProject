@@ -157,7 +157,7 @@ void supplierMenu(void){
         printf("4. Compare Suppliers\n");
         printf("5. Exit\n");
         printf("Enter your choice: ");
-        scanf("%c", &choice);
+        scanf(" %c", &choice); 
        
         switch (choice) {
             case '1':
