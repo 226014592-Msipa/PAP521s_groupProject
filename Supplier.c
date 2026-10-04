@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "Supplier.h"
- 
+
 char supplierID[20];
 char supplierName[70];
 char Email[50];
