@@ -4,6 +4,7 @@
 #define MAX_SUPPLIERS 100
 #define MAX_STRING 100
 
+
 typedef struct {
 char supplierID[20];
 char supplierName[70];

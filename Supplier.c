@@ -157,26 +157,26 @@ void supplierMenu(void){
         printf("4. Compare Suppliers\n");
         printf("5. Exit\n");
         printf("Enter your choice: ");
-        scanf("%s", &choice);
+        scanf("%c", &choice);
        
         switch (choice) {
-            case 1:
+            case '1':
                 addSupplier();
                 break;
-            case 2:
+            case '2':
                 displaySupplier();
                 break;
-            case 3:
+            case '3':
                 searchSupplier();
                 break;
-            case 4:
+            case '4':
                 compareSupplier();
                 break;
-            case 5:
+            case '5':
                 printf("Exiting Supplier Menu.\n");
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
         }
-    } while (choice != 5);
+    } while (choice != '5');
 }
