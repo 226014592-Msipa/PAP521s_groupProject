@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "Supplier.h"
- 
+
 char supplierID[20];
 char supplierName[70];
 char Email[50];
@@ -58,7 +58,7 @@ void displaySupplier(void){
     if (supplierCount == 0)
     {
         printf("\nNo suppliers have been added.\n");
-        return;
+       return;
     }
 
     printf("\n==== Supplier Information ====\n");
@@ -108,7 +108,7 @@ void compareSupplier(void){// dont comfuse this with searchSupplier, this is for
 int first, second;
  if (supplierCount < 2){ 
     printf("\nAt least two suppliers are needed to compare.\n"); 
-    return; 
+   return; 
 } 
 printf("\n===== Suppliers =====\n");
  for (int i = 0; i < supplierCount; i++) { 
@@ -146,4 +146,37 @@ printf("\n===== Suppliers =====\n");
 
 }
 
- 
+void supplierMenu(void){
+    char choice;
+
+    do {
+        printf("\n===== Supplier Menu =====\n");
+        printf("1. Add Supplier\n");
+        printf("2. Display Suppliers\n");
+        printf("3. Search Supplier\n");
+        printf("4. Compare Suppliers\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf(" %c", &choice); 
+       
+        switch (choice) {
+            case '1':
+                addSupplier();
+                break;
+            case '2':
+                displaySupplier();
+                break;
+            case '3':
+                searchSupplier();
+                break;
+            case '4':
+                compareSupplier();
+                break;
+            case '5':
+                printf("Exiting Supplier Menu.\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != '5');
+}
