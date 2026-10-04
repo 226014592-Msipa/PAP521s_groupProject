@@ -1,28 +1,63 @@
 #include <stdio.h>
 #include <string.h>
+#include "employees.h"
 
-char employeeID[100][20];
-char employeeName[100][50];
-char department[100][50];
+char employeeID[MAX_EMPLOYEES][20];
+char employeeName[MAX_EMPLOYEES][50];
+char department[MAX_EMPLOYEES][50];
 
-float basicSalary[100];
-float housing[100];
-float transport[100];
-float tax[100];
-float grossSalary[100];
-float netSalary[100];
+float basicSalary[MAX_EMPLOYEES];
+float housing[MAX_EMPLOYEES];
+float transport[MAX_EMPLOYEES];
+float tax[MAX_EMPLOYEES];
+float grossSalary[MAX_EMPLOYEES];
+float netSalary[MAX_EMPLOYEES];
 
 int employeeCount = 0;
 
 void employeeMenu()
 {
-    printf("\n--- EMPLOYEE MENU ---\n");
-    printf("1. Add Employee\n");
-    printf("2. Display Employees\n");
-    printf("3. Search Employee\n");
-    printf("4. Calculate Salary\n");
-    printf("5. Exit\n");
-    printf("Enter choice: ");
+    int choice;
+    int running = 1;
+
+    while(running == 1)
+    {
+        printf("\n....EMPLOYEE MENU .....\n");
+        printf("1. Add Employee\n");
+        printf("2. Display Employees\n");
+        printf("3. Search Employee\n");
+        printf("4. Calculate Salary\n");
+        printf("5. Exit\n");
+        printf("Enter choice: ");
+
+        scanf("%d", &choice);
+
+        if(choice == 1)
+        {
+            addEmployee();
+        }
+        else if(choice == 2)
+        {
+            displayEmployees();
+        }
+        else if(choice == 3)
+        {
+            searchEmployee();
+        }
+        else if(choice == 4)
+        {
+            calculateEmployeeSalary();
+        }
+        else if(choice == 5)
+        {
+            printf("Exiting Employee Menu.\n");
+            running = 0;
+        }
+        else
+        {
+            printf("Wrong choice\n");
+        }
+    }
 }
 
 void addEmployee()
@@ -145,41 +180,5 @@ void calculateEmployeeSalary()
     printf("Total Net Salary: %.2f\n", totalNet);
 }
 
-int main()
-{
-    int choice;
 
-    while(1)
-    {
-        employeeMenu();
 
-        scanf("%d", &choice);
-
-        if(choice == 1)
-        {
-            addEmployee();
-        }
-        else if(choice == 2)
-        {
-            displayEmployees();
-        }
-        else if(choice == 3)
-        {
-            searchEmployee();
-        }
-        else if(choice == 4)
-        {
-            calculateEmployeeSalary();
-        }
-        else if(choice == 5)
-        {
-            break;
-        }
-        else
-        {
-            printf("Wrong choice\n");
-        }
-    }
-
-    return 0;
-}

@@ -1,17 +1,18 @@
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
-#include <stdio.h>
-#include <string.h>
-char employeeID[100][20];
-char employeeName[100][50];
-char department[100][50];
-float basicSalary[100];
-float housing[100];
-float transport[100];
-float tax[100];
-float grossSalary[100];
-float netSalary[100];
-int employeeCount = 0;
+
+#define MAX_EMPLOYEES 100
+
+extern char employeeID[MAX_EMPLOYEES][20];
+extern char employeeName[MAX_EMPLOYEES][50];
+extern char department[MAX_EMPLOYEES][50];
+extern float basicSalary[MAX_EMPLOYEES];
+extern float housing[MAX_EMPLOYEES];
+extern float transport[MAX_EMPLOYEES];
+extern float tax[MAX_EMPLOYEES];
+extern float grossSalary[MAX_EMPLOYEES];
+extern float netSalary[MAX_EMPLOYEES];
+extern int employeeCount;
 void employeeMenu();
 void addEmployee();
 void displayEmployees();
