@@ -8,6 +8,7 @@
 5. Amanda Msipa 226014592 
 6. Junior S Mulozi 226004155
 
+## System Description
 ## Our Municipal Financial Management System comes with many functions such starting with the Main menu which navigates what you must do, following is the Employee Management and allows users to add or delete employees. It also contains the budget, supplier, asset and reports which also have the same function but different responsibilities according to how they're assigned.
 
 ##System Features
